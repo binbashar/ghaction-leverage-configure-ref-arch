@@ -1,2 +1,2 @@
-# ghaction-leverage-configure-ref-arch
-Configure Binbash Leverage Reference Architecture
+# Github Action: Binbash Leverage - Reference Architecture
+Configure Binbash Leverage Reference Architecture.

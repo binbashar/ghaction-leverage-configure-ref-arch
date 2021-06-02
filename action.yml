@@ -1,0 +1,72 @@
+name: "Configure Leverage Reference Architecture"
+description: 'Configure Binbash Leverage Reference Architecture'
+
+inputs:
+  base_path:
+    description: 'Path to Reference Architecture'
+    required: true
+    default: 'le-tf-infra-aws'
+  project:
+    description: 'Project short name'
+    required: true
+    default: 'bb'
+  project_long:
+    description: 'Project long name'
+    required: true
+    default: 'binbash'
+  region_secondary:
+    description: 'Secondary region'
+    required: true
+    default: 'us-east-1'
+  aws_root_account_id:
+    description: 'AWS Root Account ID'
+    required: true
+    default: '0000000000'
+  aws_security_account_id:
+    description: 'AWS Security Account ID'
+    required: true
+    default: '0000000000'
+  aws_shared_account_id:
+    description: 'AWS SHARED Account ID'
+    required: true
+    default: '0000000000'
+  aws_devstg_account_id:
+    description: 'AWS DEVSTG Account ID'
+    required: true
+    default: '0000000000'
+  aws_prd_account_id:
+    description: 'AWS PRD Account ID'
+    required: true
+    default: '0000000000'
+
+runs:
+  using: composite
+  steps:
+    - name: Configure AWS credentials
+      shell: bash
+      run: |
+        set +x
+
+        echo "Create common config file"
+        cat <<EOF > ${{ inputs.base_path }}/config/common.config
+        project               = "${{ inputs.project }}"
+        project_long          = "${{ inputs.project_long }}"
+        region_secondary      = "${{ inputs.region_secondary }}"
+        root_account_id       = "${{ inputs.aws_root_account_id }}"
+        security_account_id   = "${{ inputs.aws_security_account_id }}"
+        shared_account_id     = "${{ inputs.aws_shared_account_id }}"
+        appsdevstg_account_id = "${{ inputs.aws_devstg_account_id }}"
+        appsprd_account_id    = "${{ inputs.aws_prd_account_id }}"
+        vault_address         = ""
+        vault_token           = ""
+        EOF
+
+        echo "Disable MFA"
+        sed -i s/MFA_ENABLED=true/MFA_ENABLED=false/ ${{ inputs.base_path }}/build.env
+        sed -i s/MFA_ENABLED=True/MFA_ENABLED=False/ ${{ inputs.base_path }}/build.env
+
+        echo "Enable TTY"
+        echo USE_TTY=True >> ${{ inputs.base_path }}/build.env
+
+        echo "Create git config file to avoid using git defaults"
+        touch ~/.gitconfig
