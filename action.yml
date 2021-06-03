@@ -38,6 +38,14 @@ inputs:
     description: 'AWS PRD Account ID'
     required: true
     default: '0000000000'
+  vault_address:
+    description: 'Vault Address'
+    required: true
+    default: ''
+  vault_token:
+    description: 'Vault Token'
+    required: true
+    default: ''
 
 runs:
   using: composite
@@ -57,8 +65,8 @@ runs:
         shared_account_id     = "${{ inputs.aws_shared_account_id }}"
         appsdevstg_account_id = "${{ inputs.aws_devstg_account_id }}"
         appsprd_account_id    = "${{ inputs.aws_prd_account_id }}"
-        vault_address         = ""
-        vault_token           = ""
+        vault_address         = "${{ inputs.vault_address }}"
+        vault_token           = "${{ inputs.vault_token }}"
         EOF
 
         echo "Disable MFA"
