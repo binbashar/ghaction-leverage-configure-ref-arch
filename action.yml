@@ -2,8 +2,8 @@ name: "Configure Leverage Reference Architecture"
 description: 'Configure Binbash Leverage Reference Architecture'
 
 inputs:
-  base_path:
-    description: 'Path to Reference Architecture'
+  dir_name:
+    description: 'Directory that contains the Reference Architecture'
     required: true
     default: 'le-tf-infra-aws'
   project:
@@ -48,7 +48,7 @@ runs:
         set +x
 
         echo "Create common config file"
-        cat <<EOF > ${{ inputs.base_path }}/config/common.config
+        cat <<EOF > $GITHUB_WORKSPACE/${{ inputs.dir_name }}/config/common.config
         project               = "${{ inputs.project }}"
         project_long          = "${{ inputs.project_long }}"
         region_secondary      = "${{ inputs.region_secondary }}"
@@ -62,11 +62,11 @@ runs:
         EOF
 
         echo "Disable MFA"
-        sed -i s/MFA_ENABLED=true/MFA_ENABLED=false/ ${{ inputs.base_path }}/build.env
-        sed -i s/MFA_ENABLED=True/MFA_ENABLED=False/ ${{ inputs.base_path }}/build.env
+        sed -i s/MFA_ENABLED=true/MFA_ENABLED=false/ $GITHUB_WORKSPACE/${{ inputs.dir_name }}/build.env
+        sed -i s/MFA_ENABLED=True/MFA_ENABLED=False/ $GITHUB_WORKSPACE/${{ inputs.dir_name }}/build.env
 
         echo "Enable TTY"
-        echo USE_TTY=True >> ${{ inputs.base_path }}/build.env
+        echo USE_TTY=True >> $GITHUB_WORKSPACE/${{ inputs.dir_name }}/build.env
 
         echo "Create git config file to avoid using git defaults"
         touch ~/.gitconfig
