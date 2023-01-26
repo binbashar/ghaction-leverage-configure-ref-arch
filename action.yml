@@ -148,7 +148,7 @@ runs:
           }
           vault_address         = "${{ inputs.vault_address }}"
           vault_token           = "${{ inputs.vault_token }}"
-          sso_enabled           = "${{ inputs.sso_enabled }}"
+          sso_enabled           = ${{ inputs.sso_enabled }}
           sso_start_url         = "${{ inputs.sso_start_url }}"
           sso_region            = "${{ inputs.sso_region }}"
         EOF
@@ -216,7 +216,7 @@ runs:
           }
           vault_address         = "${{ inputs.vault_address }}"
           vault_token           = "${{ inputs.vault_token }}"
-          sso_enabled           = "${{ inputs.sso_enabled }}"
+          sso_enabled           = ${{ inputs.sso_enabled }}
           sso_start_url         = "${{ inputs.sso_start_url }}"
           sso_region            = "${{ inputs.sso_region }}"
         EOF
