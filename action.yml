@@ -2,6 +2,18 @@ name: "Configure Leverage Reference Architecture"
 description: 'Configure Binbash Leverage Reference Architecture'
 
 inputs:
+  refarch_version:
+    description: 'Leverage RefArch V1 or V2 format'
+    required: false
+    default: 'V1'
+  cli_version_post180:
+    description: 'Wheter the Leverage CLI version is >=1.8.0 (for build.env formatting)'
+    required: false
+    default: true
+  toolbox_version:
+    description: 'Leverage Toolbox version'
+    required: false
+    default: '1.2.7-0.1.1'
   dir_name:
     description: 'Directory that contains the Reference Architecture'
     required: true
@@ -14,72 +26,149 @@ inputs:
     description: 'Project long name'
     required: true
     default: 'binbash'
+  region_primary:
+    description: 'Primary region'
+    required: false
+    default: 'us-east-1'
   region_secondary:
     description: 'Secondary region'
-    required: true
-    default: 'us-east-1'
+    required: false
+    default: 'us-east-2'
+
   aws_root_account_id:
     description: 'AWS Root Account ID'
     required: true
     default: '0000000000'
+  aws_root_account_email:
+    description: 'AWS Root Account Email'
+    required: false
+    default: 'binbash+root@binbash.com.ar'
   aws_security_account_id:
     description: 'AWS Security Account ID'
     required: true
     default: '0000000000'
-  aws_shared_account_id:
-    description: 'AWS SHARED Account ID'
-    required: true
-    default: '0000000000'
-  aws_devstg_account_id:
-    description: 'AWS DEVSTG Account ID'
-    required: true
-    default: '0000000000'
-  aws_prd_account_id:
-    description: 'AWS PRD Account ID'
-    required: true
-    default: '0000000000'
+  aws_security_account_email:
+    description: 'AWS Security Account Email'
+    required: false
+    default: 'binbash+Security@binbash.com.ar'
   aws_network_account_id:
     description: 'AWS NETWORK Account ID'
     required: true
     default: '0000000000'
+  aws_network_account_email:
+    description: 'AWS Network Account Email'
+    required: false
+    default: 'binbash+network@binbash.com.ar'
+  aws_shared_account_id:
+    description: 'AWS SHARED Account ID'
+    required: true
+    default: '0000000000'
+  aws_shared_account_email:
+    description: 'AWS SHARED Account Email'
+    required: false
+    default: 'binbash+shared@binbash.com.ar'
+  aws_devstg_account_id:
+    description: 'AWS DEVSTG Account ID'
+    required: false
+    default: '0000000000'
+  aws_devstg_account_email:
+    description: 'AWS DEVSTG Account Email'
+    required: false
+    default: 'binbash+devstg@binbash.com.ar'
+  aws_prd_account_id:
+    description: 'AWS PRD Account ID'
+    required: false
+    default: '0000000000'
+  aws_prd_account_email:
+    description: 'AWS PRD Account Email'
+    required: false
+    default: 'binbash+prd@binbash.com.ar'
+
   vault_address:
     description: 'Vault Address'
-    required: true
+    required: false
     default: ''
   vault_token:
     description: 'Vault Token'
-    required: true
+    required: false
     default: ''
-
+  sso_enabled:
+    description: 'SSO enabled'
+    required: false
+    default: false
+  sso_start_url:
+    description: 'SSO Start URL'
+    required: false
+    default: ''
+  sso_region:
+    description: 'SSO Region'
+    required: false
+    default: ''
 runs:
   using: composite
   steps:
-    - name: Configure AWS credentials
+    - name: Configure Leverage Reference Architecture and CLI
       shell: bash
       run: |
         set +x
 
         echo "Create common config file"
-        cat <<EOF > $GITHUB_WORKSPACE/${{ inputs.dir_name }}/config/common.config
-        project               = "${{ inputs.project }}"
-        project_long          = "${{ inputs.project_long }}"
-        region_secondary      = "${{ inputs.region_secondary }}"
-        root_account_id       = "${{ inputs.aws_root_account_id }}"
-        security_account_id   = "${{ inputs.aws_security_account_id }}"
-        shared_account_id     = "${{ inputs.aws_shared_account_id }}"
-        appsdevstg_account_id = "${{ inputs.aws_devstg_account_id }}"
-        appsprd_account_id    = "${{ inputs.aws_prd_account_id }}"
-        network_account_id    = "${{ inputs.aws_network_account_id }}"
-        vault_address         = "${{ inputs.vault_address }}"
-        vault_token           = "${{ inputs.vault_token }}"
+        if [[ "${{ inputs.refarch_version }}" == "V1" ]] || [[ "${{ inputs.refarch_version }}" == "v1" ]];
+        then
+          cat <<EOF >> $GITHUB_WORKSPACE/${{ inputs.dir_name }}/config/common.config
+          project               = "${{ inputs.project }}"
+          project_long          = "${{ inputs.project_long }}"
+          region_primary        = "${{ inputs.region_primary }}"
+          region_secondary      = "${{ inputs.region_secondary }}"
+          accounts = {
+            root = {
+              email = "${{ inputs.aws_root_account_email }}"
+              id    = "${{ inputs.aws_root_account_id }}"
+            },
+            security = {
+              email = "${{ inputs.aws_security_account_email }}"
+              id    = "${{ inputs.aws_security_account_id }}"
+            },
+            shared = {
+              email = "${{ inputs.aws_shared_account_email }}"
+              id    = "${{ inputs.aws_shared_account_id }}"
+            },
+            network = {
+              email = "${{ inputs.aws_network_account_email }}"
+              id    = "${{ inputs.aws_network_account_id }}"
+            },
+            apps-devstg = {
+              email = "${{ inputs.aws_devstg_account_email }}"
+              id    = "${{ inputs.aws_devstg_account_id }}"
+            },
+            apps-prd = {
+              email = "${{ inputs.aws_prd_account_email }}"
+              id    = "${{ inputs.aws_prd_account_id }}"
+            }
+          }
+          vault_address         = "${{ inputs.vault_address }}"
+          vault_token           = "${{ inputs.vault_token }}"
+          sso_enabled           = "${{ inputs.sso_enabled }}"
+          sso_start_url         = "${{ inputs.sso_start_url }}"
+          sso_region            = "${{ inputs.sso_region }}"
         EOF
+        fi
 
-        echo "Disable MFA"
-        sed -i s/MFA_ENABLED=true/MFA_ENABLED=false/ $GITHUB_WORKSPACE/${{ inputs.dir_name }}/build.env
-        sed -i s/MFA_ENABLED=True/MFA_ENABLED=False/ $GITHUB_WORKSPACE/${{ inputs.dir_name }}/build.env
+        if [[ "${{ inputs.sso_enabled }}" == "false" ]];
+        then
+          echo "Disable MFA"
+          sed -i s/MFA_ENABLED=true/MFA_ENABLED=false/ $GITHUB_WORKSPACE/${{ inputs.dir_name }}/build.env
+          sed -i s/MFA_ENABLED=True/MFA_ENABLED=False/ $GITHUB_WORKSPACE/${{ inputs.dir_name }}/build.env
+        fi
 
-        echo "Enable TTY"
-        echo USE_TTY=True >> $GITHUB_WORKSPACE/${{ inputs.dir_name }}/build.env
+        if [[ "${{ inputs.cli_version_post180 }}" == true ]];
+        then
+          echo "Setting build.env for Leverage CLI >=1.8.0"
+          sed -E -i '/TERRAFORM_IMAGE_NAME/d' $GITHUB_WORKSPACE/${{ inputs.dir_name }}/build.env
+        fi
+        echo "Setting build.env for Leverage Toolbox version"
+        sed -E -i '/TERRAFORM_IMAGE_TAG/d' $GITHUB_WORKSPACE/${{ inputs.dir_name }}/build.env
+        echo "TERRAFORM_IMAGE_TAG=${{ inputs.toolbox_version }}" >> $GITHUB_WORKSPACE/${{ inputs.dir_name }}/build.env
 
         echo "Create git config file to avoid using git defaults"
         touch ~/.gitconfig
