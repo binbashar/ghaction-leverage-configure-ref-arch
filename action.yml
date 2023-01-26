@@ -115,7 +115,7 @@ runs:
         echo "Create common config file"
         if [[ "${{ inputs.refarch_version }}" == "V1" ]] || [[ "${{ inputs.refarch_version }}" == "v1" ]];
         then
-          cat <<EOF >> $GITHUB_WORKSPACE/${{ inputs.dir_name }}/config/common.config
+          cat <<EOF >> $GITHUB_WORKSPACE/${{ inputs.dir_name }}/config/common.tfvars
           project               = "${{ inputs.project }}"
           project_long          = "${{ inputs.project_long }}"
           region_primary        = "${{ inputs.region_primary }}"
