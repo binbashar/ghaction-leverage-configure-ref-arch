@@ -152,6 +152,76 @@ runs:
           sso_start_url         = "${{ inputs.sso_start_url }}"
           sso_region            = "${{ inputs.sso_region }}"
         EOF
+        elif [[ "${{ inputs.refarch_version }}" == "V2" ]] || [[ "${{ inputs.refarch_version }}" == "v2" ]];
+        then
+          cat <<EOF >> $GITHUB_WORKSPACE/${{ inputs.dir_name }}/config/common.config
+          project               = "${{ inputs.project }}"
+          project_long          = "${{ inputs.project_long }}"
+          region_primary        = "${{ inputs.region_primary }}"
+          region_secondary      = "${{ inputs.region_secondary }}"
+          organization = {
+            accounts = {
+              management = {
+                email = "${{ inputs.aws_root_account_email }}"
+                id    = "${{ inputs.aws_root_account_id }}"
+              }
+            }
+            organizational_units = {
+              security = {
+                policy = "default"
+                accounts = {
+                  security = {
+                    email = "${{ inputs.aws_security_account_email }}"
+                    id    = "${{ inputs.aws_security_account_id }}"
+                  }
+                }
+              },
+              apps-prd = {
+                policy = "default"
+                accounts = {
+                  apps-prd = {
+                    email = "${{ inputs.aws_apps-prd_account_email }}"
+                    id    = "${{ inputs.aws_apps-prd_account_id }}"
+                  }
+                }
+              },
+              apps-devstg = {
+                policy = "default"
+                accounts = {
+                  apps-devstg = {
+                    email = "${{ inputs.aws_apps-devstg_account_email }}"
+                    id    = "${{ inputs.aws_apps-devstg_account_id }}"
+                  }
+                }
+              },
+              network = {
+                policy = "default"
+                accounts = {
+                  network = {
+                    email = "${{ inputs.aws_network_account_email }}"
+                    id    = "${{ inputs.aws_network_account_id }}"
+                  }
+                }
+              },
+              shared = {
+                policy = "default"
+                accounts = {
+                  shared = {
+                    email = "${{ inputs.aws_shared_account_email }}"
+                    id    = "${{ inputs.aws_shared_account_id }}"
+                  }
+                }
+              }
+            }
+          }
+          vault_address         = "${{ inputs.vault_address }}"
+          vault_token           = "${{ inputs.vault_token }}"
+          sso_enabled           = "${{ inputs.sso_enabled }}"
+          sso_start_url         = "${{ inputs.sso_start_url }}"
+          sso_region            = "${{ inputs.sso_region }}"
+        EOF
+        else
+            exit 1
         fi
 
         if [[ "${{ inputs.sso_enabled }}" == "false" ]];
