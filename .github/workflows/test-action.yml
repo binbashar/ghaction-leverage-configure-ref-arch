@@ -12,16 +12,17 @@ jobs:
     - name: Check out this GHAction
       uses: actions/checkout@v2
 
-    - name: Check out the Reference Architecture code
+    - name: Check out the Reference Architecture V1
       uses: actions/checkout@v2
       with:
         repository: binbashar/le-tf-infra-aws
         path: le-tf-infra-aws
 
-    - name: Configure Reference Architecture
+    - name: Configure Reference Architecture V1
       uses: ./
       with:
         dir_name: "le-tf-infra-aws"
+        refarch_version: "v1"
         project: "bb"
         project_long: "binbash"
         region_primary: "us-east-1"
@@ -38,7 +39,7 @@ jobs:
         sso_region: ""
 
 
-    - name: Check configs
+    - name: Check configs V1
       run: |
         echo "############################################"
         echo "# build.env"
@@ -47,5 +48,44 @@ jobs:
         echo "############################################"
         echo "# common.tfvars"
         echo "############################################"
-        cat config/commons.tfvars
+        cat config/common.tfvars
       working-directory: le-tf-infra-aws
+
+    - name: Check out the Reference Architecture V2
+      uses: actions/checkout@v2
+      with:
+        repository: binbashar/le-tf-ref-arch-v2-poc
+        path: le-tf-ref-arch-v2-poc
+
+    - name: Configure Reference Architecture V2
+      uses: ./
+      with:
+        dir_name: "le-tf-ref-arch-v2-poc"
+        refarch_version: "v2"
+        project: "bb"
+        project_long: "binbash"
+        region_primary: "us-east-1"
+        region_secondary: "us-east-2"
+        aws_root_account_id: " secrets.AWS_ROOT_ACCOUNT_ID "
+        aws_security_account_id: " secrets.AWS_SECURITY_ACCOUNT_ID "
+        aws_shared_account_id: " secrets.AWS_SHARED_ACCOUNT_ID "
+        aws_devstg_account_id: " secrets.AWS_DEVSTG_ACCOUNT_ID "
+        aws_network_account_id: " secrets.AWS_NETWORK_ACCOUNT_ID "
+        vault_address: ""
+        vault_token: ""
+        sso_enabled: false
+        sso_start_url: ""
+        sso_region: ""
+
+
+    - name: Check configs V2
+      run: |
+        echo "############################################"
+        echo "# build.env"
+        echo "############################################"
+        cat build.env
+        echo "############################################"
+        echo "# common.tfvars"
+        echo "############################################"
+        cat config/common.tfvars
+      working-directory: le-tf-ref-arch-v2-poc
