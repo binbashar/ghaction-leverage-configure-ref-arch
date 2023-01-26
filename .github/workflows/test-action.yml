@@ -1,0 +1,45 @@
+name: Test action
+
+# This workflow can be triggered manually either through Github UI or through the API
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  create_eks:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Check out the Reference Architecture code
+      uses: actions/checkout@v2
+      with:
+        repository: binbashar/le-tf-infra-aws
+
+    - name: Configure Reference Architecture
+      uses: binbashar/ghaction-leverage-configure-ref-arch@${{ github.event.pull_request.head.sha }}
+      with:
+        dir_name: "."
+        project: "bb"
+        project_long: "binbash"
+        region_primary: "us-east-1"
+        region_secondary: "us-east-2"
+        aws_root_account_id: " secrets.AWS_ROOT_ACCOUNT_ID "
+        aws_security_account_id: " secrets.AWS_SECURITY_ACCOUNT_ID "
+        aws_shared_account_id: " secrets.AWS_SHARED_ACCOUNT_ID "
+        aws_devstg_account_id: " secrets.AWS_DEVSTG_ACCOUNT_ID "
+        aws_network_account_id: " secrets.AWS_NETWORK_ACCOUNT_ID "
+        vault_address: ""
+        vault_token: ""
+        sso_enabled: false
+        sso_start_url: ""
+        sso_region: ""
+
+    - name: Check configs
+      run: |
+        echo "############################################"
+        echo "# build.env"
+        echo "############################################"
+        cat build.env
+        echo "############################################"
+        echo "# common.tfvars"
+        echo "############################################"
+        cat config/commons.tfvars
