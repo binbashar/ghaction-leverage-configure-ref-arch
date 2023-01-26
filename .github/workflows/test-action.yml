@@ -14,11 +14,8 @@ jobs:
       with:
         repository: binbashar/le-tf-infra-aws
 
-    - name: Info
-      run: |
-        echo "Using branch ${GITHUB_REF}."
     - name: Configure Reference Architecture
-      uses: binbashar/ghaction-leverage-configure-ref-arch@${GITHUB_REF}
+      uses: ./
       with:
         dir_name: "."
         project: "bb"
