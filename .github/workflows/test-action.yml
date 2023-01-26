@@ -10,13 +10,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Check out this GHAction
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Check out the Reference Architecture V1
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         repository: binbashar/le-tf-infra-aws
         path: le-tf-infra-aws
+        ref: master
 
     - name: Configure Reference Architecture V1
       uses: ./
@@ -52,10 +53,11 @@ jobs:
       working-directory: le-tf-infra-aws
 
     - name: Check out the Reference Architecture V2
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
       with:
         repository: binbashar/le-tf-ref-arch-v2-poc
         path: le-tf-ref-arch-v2-poc
+        ref: master
 
     - name: Configure Reference Architecture V2
       uses: ./
