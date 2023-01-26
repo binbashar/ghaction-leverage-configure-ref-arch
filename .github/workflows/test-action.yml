@@ -21,7 +21,7 @@ jobs:
     - name: Configure Reference Architecture
       uses: ./
       with:
-        dir_name: "."
+        dir_name: "le-tf-infra-aws"
         project: "bb"
         project_long: "binbash"
         region_primary: "us-east-1"
@@ -36,7 +36,7 @@ jobs:
         sso_enabled: false
         sso_start_url: ""
         sso_region: ""
-      working-directory: le-tf-infra-aws
+
 
     - name: Check configs
       run: |
