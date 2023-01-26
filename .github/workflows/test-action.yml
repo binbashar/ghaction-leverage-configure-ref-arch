@@ -9,10 +9,14 @@ jobs:
   create_eks:
     runs-on: ubuntu-latest
     steps:
+    - name: Check out this GHAction
+      uses: actions/checkout@v2
+
     - name: Check out the Reference Architecture code
       uses: actions/checkout@v2
       with:
         repository: binbashar/le-tf-infra-aws
+        path: le-tf-infra-aws
 
     - name: Configure Reference Architecture
       uses: ./
@@ -32,6 +36,7 @@ jobs:
         sso_enabled: false
         sso_start_url: ""
         sso_region: ""
+      working-directory: le-tf-infra-aws
 
     - name: Check configs
       run: |
@@ -43,3 +48,4 @@ jobs:
         echo "# common.tfvars"
         echo "############################################"
         cat config/commons.tfvars
+      working-directory: le-tf-infra-aws
